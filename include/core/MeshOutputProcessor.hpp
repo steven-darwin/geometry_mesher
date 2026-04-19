@@ -11,6 +11,8 @@
 #ifndef MESH_OUTPUT_PROCESSOR_HPP
 #define MESH_OUTPUT_PROCESSOR_HPP
 
+#include <string>
+
 #include "geometry-topology/GeometryTopology.hpp"
 #include "geometry-topology/GeometryTopologyVertex.hpp"
 #include "geometry-topology/GeometryTopologyEdge.hpp"
@@ -36,7 +38,7 @@ public:
     ~MeshOutputProcessor();
 
     /** Method to set output adapter info */
-    void setOutputAdapterInfo(scmp::FileExtension file_extension, const char* file_path);
+    void setOutputAdapterInfo(scmp::FileExtension file_extension, std::string file_name);
 
     /** Method to run output adapter */
     void runOutputAdapter();

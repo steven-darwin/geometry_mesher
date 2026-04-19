@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 #include "geometry-topology/GeometryTopologyVertex.hpp"
 #include "geometry-topology/GeometryTopologyEdge.hpp"
@@ -37,7 +38,7 @@ public:
     ~MeshInputProcessor();
 
     /** Method to set input adapter info */
-    void setInputAdapterInfo(scmp::FileExtension file_extension, const char* file_path);
+    void setInputAdapterInfo(scmp::FileExtension file_extension, std::string file_name);
 
     /** Method to run input adapter */
     void runInputAdapter();

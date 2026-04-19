@@ -28,19 +28,19 @@ MeshInputProcessor::~MeshInputProcessor() {
     // TBA
 }
 
-void MeshInputProcessor::setInputAdapterInfo(scmp::FileExtension file_extension, const char* file_path) {
+void MeshInputProcessor::setInputAdapterInfo(scmp::FileExtension file_extension, std::string file_name) {
     _inputAdapterInfo._fileExtension = file_extension;
-    _inputAdapterInfo._filePath = file_path;
+    _inputAdapterInfo._filePath = file_name;
 
     switch (file_extension) {
     case scmp::STEP:
-        _inputAdapterInfo._adapterObj = std::make_shared<InputSTEPAdapter>(file_path);
+        _inputAdapterInfo._adapterObj = std::make_shared<InputSTEPAdapter>(file_name);
         break;
     case scmp::XDMF:
-        _inputAdapterInfo._adapterObj = std::make_shared<InputXDMFAdapter>(file_path);
+        _inputAdapterInfo._adapterObj = std::make_shared<InputXDMFAdapter>(file_name, file_name);
         break;
     case scmp::HDF5:
-        _inputAdapterInfo._adapterObj = std::make_shared<InputHDF5Adapter>(file_path);
+        _inputAdapterInfo._adapterObj = std::make_shared<InputHDF5Adapter>(file_name);
         break;
     default:
         // To Do: throw unrecogized file_extension error
