@@ -44,7 +44,7 @@ void MeshOutputProcessor::setOutputAdapterInfo(scmp::FileExtension file_extensio
 }
 
 void MeshOutputProcessor::runOutputAdapter() {
-    std::dynamic_pointer_cast<OutputAdapter>(_outputAdapterInfo._adapterObj)->serialize(_outputAdapterInfo._neutralGeometryTopology, scmp::MESH);
+    std::dynamic_pointer_cast<OutputAdapter>(_outputAdapterInfo._adapterObj)->serialize(_outputAdapterInfo._neutralGeometryTopology);
 
 }
 

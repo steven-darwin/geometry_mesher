@@ -48,7 +48,7 @@ void MeshCore::run(scmp::mesh::MeshStrategy strategy) {
         _inputProcessor.setMeshInputData(_inputData);
 
         _algorithm = std::make_shared<MeshTransfiniteInterpolationAlgorithm>(_inputData, _outputData);
-        _algorithm->run(2);
+        _algorithm->run(4);
 
         _outputProcessor.getMeshOutputData(_outputData);
         _outputProcessor.runOutputAdapter();

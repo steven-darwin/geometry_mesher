@@ -10,7 +10,7 @@ int main()
 {
 	MeshCore mesh_program;
 	mesh_program.setInputProcessor(scmp::STEP, "slab");
-	mesh_program.setOutputProcessor(scmp::XDMF, "slab");
+	mesh_program.setOutputProcessor(scmp::XDMF, "slab_mesh");
 	mesh_program.run(scmp::mesh::TRANSFINITE_INTERPOLATION);
 
 	return 0;
