@@ -1,17 +1,24 @@
 ﻿#include <memory>
 #include <iostream>
 #include <unordered_set>
+#include <random>
+#include <ctime>
 
 #include "general/Generic.hpp"
 
 #include "core/MeshCore.hpp"
+#include "zoning/MeshZoning.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
-	MeshCore mesh_program;
-	mesh_program.setInputProcessor(scmp::STEP, "slab");
-	mesh_program.setOutputProcessor(scmp::XDMF, "slab_mesh");
-	mesh_program.run(scmp::mesh::TRANSFINITE_INTERPOLATION);
+	MeshCore original_mesh_program(argv[1]);
+	original_mesh_program.setInputProcessor();
+	original_mesh_program.setOutputProcessor();
+	original_mesh_program.run();
+
+	MeshZoning extended_mesh_program(argv[1]);
+	extended_mesh_program.setupPhase();
+	extended_mesh_program.executionPhase();
 
 	return 0;
 }

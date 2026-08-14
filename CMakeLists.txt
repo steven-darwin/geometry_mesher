@@ -20,6 +20,7 @@ set(PROJECT_SOURCES
     src/core/MeshInputData.cpp
     src/core/MeshAlgorithm.cpp
     src/core/MeshOutputData.cpp
+    src/zoning/MeshZoning.cpp
     src/transfinite-interpolation/MeshTransfiniteInterpolationInputData.cpp
     src/transfinite-interpolation/MeshTransfiniteInterpolationAlgorithm.cpp
     src/transfinite-interpolation/MeshTransfiniteInterpolationOutputData.cpp
@@ -44,6 +45,7 @@ set(PROJECT_SOURCES
     ../../src/geometry-topology/GeometryTopologyWire.cpp
     ../../src/geometry-topology/GeometryTopologyEdge.cpp
     ../../src/geometry-topology/GeometryTopologyVertex.cpp
+    ../../src/utility/ConfigReader.cpp
 )
 
 add_executable (${PROJECT_NAME} ${PROJECT_SOURCES}) 

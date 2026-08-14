@@ -85,7 +85,7 @@ std::shared_ptr<GeometryTopology> MeshTransfiniteInterpolationOutputData::transf
 
     _composite = std::make_shared<GeometryTopologyComposite>();
     for (auto cell_list_iter = cell_list.begin(); cell_list_iter != cell_list.end(); cell_list_iter++) {
-        _composite->addCell((*cell_list_iter).first);
+        _composite->addCell((*cell_list_iter).first, 0);
     }
 
     return _composite;
@@ -176,7 +176,10 @@ void MeshTransfiniteInterpolationOutputData::constructFaceFromCycledGraphEdge(st
                             wire->addEdge(edge_list.at(*traversed_edge_iter).second, origin_vertex_idx);
                         }
                     
-                        std::shared_ptr<GeometryTopologyFace> face(new GeometryTopologyFace(wire, wire->reverseCopy()));
+                        std::shared_ptr<GeometryTopologyWire> wire_complement = wire->reverseCopy();
+                        wire_complement->setWirePair(wire);
+
+                        std::shared_ptr<GeometryTopologyFace> face(new GeometryTopologyFace(wire, wire_complement));
                         face_list.insert(std::make_pair(face, std::make_pair(getCombinationID(sorted_edge_idx), std::make_shared<MeshGraphVertex>(face))));
                         face_list_idx.insert(getCombinationID(sorted_edge_idx));
 
@@ -248,7 +251,10 @@ void MeshTransfiniteInterpolationOutputData::constructCellFromCycledGraphEdge(st
                             shell->addFace(std::dynamic_pointer_cast<GeometryTopologyFace>((*traversed_edge_iter)->getConnectedVertex(non_existing_face_idx)->getVertex()), 0);
                         }
 
-                        std::shared_ptr<GeometryTopologyCell> cell(new GeometryTopologyCell(shell, shell->reverseCopy()));
+                        std::shared_ptr<GeometryTopologyShell> shell_complement = shell->reverseCopy();
+                        shell_complement->setShellPair(shell);
+
+                        std::shared_ptr<GeometryTopologyCell> cell(new GeometryTopologyCell(shell, shell_complement));
                         cell_list.insert(std::make_pair(cell, getCombinationID(sorted_edge_idx)));
                         cell_list_idx.insert(getCombinationID(sorted_edge_idx));
 
@@ -367,7 +373,10 @@ void MeshTransfiniteInterpolationOutputData::constructCellFromCycledGraphVertex(
                 shell->addFace(std::dynamic_pointer_cast<GeometryTopologyFace>((*traversed_vertex_iter)->getVertex()), 0);
             }
 
-            std::shared_ptr<GeometryTopologyCell> cell(new GeometryTopologyCell(shell, shell->reverseCopy()));
+            std::shared_ptr<GeometryTopologyShell> shell_complement = shell->reverseCopy();
+            shell_complement->setShellPair(shell);
+
+            std::shared_ptr<GeometryTopologyCell> cell(new GeometryTopologyCell(shell, shell_complement));
             cell_list.insert(std::make_pair(cell, getCombinationID(sorted_vertex_idx)));
             cell_list_idx.insert(getCombinationID(sorted_vertex_idx));
 

@@ -27,20 +27,23 @@ public:
     /** Constructor of MeshCore object
      */
     MeshCore();
+    MeshCore(const char* runtime_config_file_path);
 
     /** Destructor of MeshCore object */
     ~MeshCore();
 
     /** Method to set input file and input adapter obj */
-    void setInputProcessor(scmp::FileExtension input_file_extension, const char* input_file_path);
+    void setInputProcessor();
 
     /** Method to set output file and output adapter obj */
-    void setOutputProcessor(scmp::FileExtension output_file_extension, const char* output_file_path);
+    void setOutputProcessor();
 
     /** Method to set mesh strategy */
-    void run(scmp::mesh::MeshStrategy strategy);
+    void run();
 
 private:
+    const char* _runtimeConfigFilePath;
+
     MeshInputProcessor _inputProcessor;
     MeshOutputProcessor _outputProcessor;
 

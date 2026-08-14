@@ -10,7 +10,8 @@
 
 #include <memory>
 
-#include <general/Generic.hpp>
+#include "general/Generic.hpp"
+#include "utility/ConfigReader.hpp"
 
 #include "input-output/OutputAdapter.hpp"
 #include "input-output/OutputXDMFAdapter.hpp"
@@ -26,26 +27,22 @@ MeshOutputProcessor::~MeshOutputProcessor() {
     // TBA
 }
 
-void MeshOutputProcessor::setOutputAdapterInfo(scmp::FileExtension file_extension, std::string file_name) {
-    _outputAdapterInfo._fileExtension = file_extension;
-    _outputAdapterInfo._filePath = file_name;
+void MeshOutputProcessor::setOutputAdapterInfo(const char* runtime_config_file_path) {
+    ConfigReader config_reader;
 
-    switch (file_extension) {
-    case scmp::XDMF:
-        _outputAdapterInfo._adapterObj = std::make_shared<OutputXDMFAdapter>(file_name, file_name);
-        break;
-    case scmp::HDF5:
-        _outputAdapterInfo._adapterObj = std::make_shared<OutputHDF5Adapter>(file_name);
-        break;
-    default:
-        // To Do: throw unrecogized file_extension error
-        break;
+    if (config_reader.getRuntimeConfigValue(runtime_config_file_path, "mesh", "output_file_extension") == "xdmf & hdf5") {
+        _outputAdapterInfo._adapterObj = std::make_shared<OutputXDMFAdapter>(runtime_config_file_path, "original.mesh");
+        OutputXDMFAdapter::ParameterMetadata computational_grid_parameter = {
+            "computational_grid",
+            {1, 3},
+            GeometryTopology::Type::VERTEX
+        };
+        std::dynamic_pointer_cast<OutputXDMFAdapter>(_outputAdapterInfo._adapterObj)->addSolverParameter({ computational_grid_parameter });
     }
 }
 
 void MeshOutputProcessor::runOutputAdapter() {
     std::dynamic_pointer_cast<OutputAdapter>(_outputAdapterInfo._adapterObj)->serialize(_outputAdapterInfo._neutralGeometryTopology);
-
 }
 
 void MeshOutputProcessor::getMeshOutputData(std::shared_ptr<MeshOutputData> output_data) {

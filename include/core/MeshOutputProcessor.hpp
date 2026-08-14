@@ -38,7 +38,7 @@ public:
     ~MeshOutputProcessor();
 
     /** Method to set output adapter info */
-    void setOutputAdapterInfo(scmp::FileExtension file_extension, std::string file_name);
+    void setOutputAdapterInfo(const char* runtime_config_file_path);
 
     /** Method to run output adapter */
     void runOutputAdapter();

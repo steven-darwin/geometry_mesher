@@ -28,28 +28,16 @@ MeshInputProcessor::~MeshInputProcessor() {
     // TBA
 }
 
-void MeshInputProcessor::setInputAdapterInfo(scmp::FileExtension file_extension, std::string file_name) {
-    _inputAdapterInfo._fileExtension = file_extension;
-    _inputAdapterInfo._filePath = file_name;
+void MeshInputProcessor::setInputAdapterInfo(const char* runtime_config_file_path) {
+    ConfigReader config_reader;
 
-    switch (file_extension) {
-    case scmp::STEP:
-        _inputAdapterInfo._adapterObj = std::make_shared<InputSTEPAdapter>(file_name);
-        break;
-    case scmp::XDMF:
-        _inputAdapterInfo._adapterObj = std::make_shared<InputXDMFAdapter>(file_name, file_name);
-        break;
-    case scmp::HDF5:
-        _inputAdapterInfo._adapterObj = std::make_shared<InputHDF5Adapter>(file_name);
-        break;
-    default:
-        // To Do: throw unrecogized file_extension error
-        break;
+    if (config_reader.getRuntimeConfigValue(runtime_config_file_path, "mesh", "input_file_extension") == "step") {
+        _inputAdapterInfo._adapterObj = std::make_shared<InputSTEPAdapter>(runtime_config_file_path);
     }
 }
 
 void MeshInputProcessor::runInputAdapter() {
-    _inputAdapterInfo._neutralGeometryTopology = std::dynamic_pointer_cast<InputAdapter>(_inputAdapterInfo._adapterObj)->deserialize();
+    _inputAdapterInfo._neutralGeometryTopology = std::dynamic_pointer_cast<InputAdapter>(_inputAdapterInfo._adapterObj)->deserialize()[0];
 }
 
 void MeshInputProcessor::setMeshInputData(std::shared_ptr<MeshInputData> input_data) {

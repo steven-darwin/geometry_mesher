@@ -38,7 +38,7 @@ public:
     ~MeshInputProcessor();
 
     /** Method to set input adapter info */
-    void setInputAdapterInfo(scmp::FileExtension file_extension, std::string file_name);
+    void setInputAdapterInfo(const char* runtime_config_file_path);
 
     /** Method to run input adapter */
     void runInputAdapter();
