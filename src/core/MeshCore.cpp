@@ -9,11 +9,13 @@
  */
 
 #include <memory>
+#include <chrono>
 
 #include "general/Generic.hpp"
 #include "utility/ConfigReader.hpp"
 
 #include "core/MeshCore.hpp"
+#include "report/MeshReport.hpp"
 
 #include "transfinite-interpolation/MeshTransfiniteInterpolationInputData.hpp"
 #include "transfinite-interpolation/MeshTransfiniteInterpolationAlgorithm.hpp"
@@ -23,30 +25,16 @@
 #include "delaunay/MeshDelaunayAlgorithm.hpp"
 #include "delaunay/MeshDelaunayOutputData.hpp"
 
-MeshCore::MeshCore() {
-    // TBA
-}
-
-MeshCore::MeshCore(const char* runtime_config_file_path) {
-    _runtimeConfigFilePath = runtime_config_file_path;
-}
-
-MeshCore::~MeshCore() {
-    // TBA
-}
-
 void MeshCore::setInputProcessor() {
-    _inputProcessor.setInputAdapterInfo(_runtimeConfigFilePath);
+    _inputProcessor.setInputAdapterInfo();
 }
 
 void MeshCore::setOutputProcessor() {
-    _outputProcessor.setOutputAdapterInfo(_runtimeConfigFilePath);
+    _outputProcessor.setOutputAdapterInfo();
 }
 
 void MeshCore::run() {
-    ConfigReader config_reader;
-
-    if (config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "mesh", "strategy") == "transfinite_interpolation") {
+    if (ConfigReader::instance().getRuntimeConfigValue("mesh", "strategy") == "transfinite_interpolation") {
         _inputData = std::make_shared<MeshTransfiniteInterpolationInputData>();
         _outputData = std::make_shared<MeshTransfiniteInterpolationOutputData>();
 
@@ -54,7 +42,8 @@ void MeshCore::run() {
         _inputProcessor.setMeshInputData(_inputData);
 
         _algorithm = std::make_shared<MeshTransfiniteInterpolationAlgorithm>(_inputData, _outputData);
-        _algorithm->run(std::stoi(config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "mesh", "transfinite_interpolation_segment_count")));
+        _algorithm->run(std::stoi(ConfigReader::instance().getRuntimeConfigValue("mesh", "transfinite_interpolation_segment_count")));
+        MeshReport::instance().addTimePoint("mesh_completion", std::chrono::system_clock::now());
 
         _outputProcessor.getMeshOutputData(_outputData);
         _outputProcessor.runOutputAdapter();

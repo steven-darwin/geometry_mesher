@@ -9,11 +9,3 @@
  */
 
 #include "core/MeshInputData.hpp"
-
-MeshInputData::MeshInputData() {
-    // TBA
-}
-
-MeshInputData::~MeshInputData() {
-    // TBA
-}

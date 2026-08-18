@@ -26,11 +26,10 @@ class MeshCore {
 public:
     /** Constructor of MeshCore object
      */
-    MeshCore();
-    MeshCore(const char* runtime_config_file_path);
+    MeshCore() = default;
 
     /** Destructor of MeshCore object */
-    ~MeshCore();
+    ~MeshCore() = default;
 
     /** Method to set input file and input adapter obj */
     void setInputProcessor();
@@ -42,8 +41,6 @@ public:
     void run();
 
 private:
-    const char* _runtimeConfigFilePath;
-
     MeshInputProcessor _inputProcessor;
     MeshOutputProcessor _outputProcessor;
 

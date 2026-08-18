@@ -25,21 +25,9 @@ using json = nlohmann::json;
 #include "utility/ConfigReader.hpp"
 
 #include "zoning/MeshZoning.hpp"
-
-MeshZoning::MeshZoning() {
-    // do nothing
-}
-
-MeshZoning::MeshZoning(const char* runtime_config_file_path) {
-    _runtimeConfigFilePath = runtime_config_file_path;
-}
-
-MeshZoning::~MeshZoning() {
-    // TBA
-}
+#include "report/MeshReport.hpp"
 
 void MeshZoning::setupPhase() {
-    ConfigReader config_reader;
     bool setup_zone = true;
 
     while (setup_zone) {
@@ -60,15 +48,15 @@ void MeshZoning::setupPhase() {
 }
 
 void MeshZoning::executionPhase() {
-    ConfigReader config_reader;
+    MeshReport::instance().addTimePoint("zoning_begin", std::chrono::system_clock::now());
 
-    std::string mesh_strategy = config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "mesh", "strategy");
+    std::string mesh_strategy = ConfigReader::instance().getRuntimeConfigValue("mesh", "strategy");
     std::vector<std::shared_ptr<GeometryTopology>> neutral_geometry_topology_list;
 
     std::string existing_hdf5_file_path =
-        config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "scmp", "staging_directory_path") +
+        ConfigReader::instance().getRuntimeConfigValue("scmp", "staging_directory_path") +
         "/" +
-        config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "scmp", "file_name_prefix") +
+        ConfigReader::instance().getRuntimeConfigValue("scmp", "file_name_prefix") +
         "." +
         "original.mesh" +
         ".h5";
@@ -77,7 +65,7 @@ void MeshZoning::executionPhase() {
     std::memcpy(hdf5_buffer, existing_hdf5_file_path.c_str(), existing_hdf5_file_path.length());
     hdf5_buffer[existing_hdf5_file_path.length()] = '\0';
 
-    OutputXDMFAdapter internal_output_xdmf_adapter(_runtimeConfigFilePath, "extended.mesh");
+    OutputXDMFAdapter internal_output_xdmf_adapter("extended.mesh");
     OutputXDMFAdapter::ParameterMetadata computational_grid_parameter = {
             "computational_grid",
             {1, 3},
@@ -90,7 +78,7 @@ void MeshZoning::executionPhase() {
 
     if (mesh_strategy == "transfinite_interpolation") {
         const std::vector<std::string> zone_option = { "plane", "line", "point" };
-        InputHDF5Adapter internal_input_hdf5_adapter(_runtimeConfigFilePath, "original.mesh");
+        InputHDF5Adapter internal_input_hdf5_adapter("original.mesh");
         std::shared_ptr<GeometryTopology> original_mesh = internal_input_hdf5_adapter.deserialize()[0];
 
         json whole_mesh_zone_item;
@@ -175,7 +163,7 @@ void MeshZoning::executionPhase() {
                     if ((*zone_metadata_iter).second[element_idx_iter].has_value()) {
                         has_value_counter++;
 
-                        if (std::abs(((*zone_metadata_iter).second[element_idx_iter].value() / std::stod(config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "mesh", "transfinite_interpolation_segment_count"))) - (*computational_grid_iter).second[element_idx_iter]) < 1e-6) {
+                        if (std::abs(((*zone_metadata_iter).second[element_idx_iter].value() / std::stod(ConfigReader::instance().getRuntimeConfigValue("mesh", "transfinite_interpolation_segment_count"))) - (*computational_grid_iter).second[element_idx_iter]) < 1e-6) {
                             equal_value_counter++;
                         }
                     }
@@ -254,20 +242,42 @@ void MeshZoning::executionPhase() {
 
             json zone_item;
 
+            MeshReport::ZoneSummaryItem zone_summary;
+
             zone_item["name"] = (*zone_metadata_iter).first;
+
             zone_item["entity_id"] = neutral_geometry_topology_list[neutral_geometry_topology_list.size() - 1]->getID();
+
+            std::unordered_map<std::shared_ptr<GeometryTopology>, unsigned int> entity_list;
 
             switch (neutral_geometry_topology_list[neutral_geometry_topology_list.size() - 1]->getType()) {
             case GeometryTopology::Type::SHELL:
-                zone_item["type"] = "plane";
+                entity_list.clear();
+                neutral_geometry_topology_list[neutral_geometry_topology_list.size() - 1]->getDescendants(entity_list, GeometryTopology::Type::FACE);
+                zone_summary.entity_count.insert({ GeometryTopology::Type::FACE, entity_list.size() });
+            case GeometryTopology::Type::WIRE:
+                entity_list.clear();
+                neutral_geometry_topology_list[neutral_geometry_topology_list.size() - 1]->getDescendants(entity_list, GeometryTopology::Type::EDGE);
+                zone_summary.entity_count.insert({ GeometryTopology::Type::EDGE, entity_list.size() });
+            case GeometryTopology::Type::VERTEX:
+                entity_list.clear();
+                neutral_geometry_topology_list[neutral_geometry_topology_list.size() - 1]->getDescendants(entity_list, GeometryTopology::Type::VERTEX);
+                zone_summary.entity_count.insert({ GeometryTopology::Type::VERTEX, entity_list.size() });
+            }
+
+            switch (neutral_geometry_topology_list[neutral_geometry_topology_list.size() - 1]->getType()) {
+            case GeometryTopology::Type::SHELL:
+                zone_item["type"] = zone_summary.type = "plane";
                 break;
             case GeometryTopology::Type::WIRE:
-                zone_item["type"] = "line";
+                zone_item["type"] = zone_summary.type = "line";
                 break;
             case GeometryTopology::Type::VERTEX:
-                zone_item["type"] = "point";
+                zone_item["type"] = zone_summary.type = "point";
                 break;
             }
+
+            MeshReport::instance().setZoneSummaryItem((*zone_metadata_iter).first, zone_summary);
 
             std::vector<json> zone_coordinate_list;
 
@@ -287,7 +297,7 @@ void MeshZoning::executionPhase() {
                         break;
                     }
 
-                    zone_coordinate["logical_value"] = (*zone_metadata_iter).second[element_idx_iter].value() / std::stod(config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "mesh", "transfinite_interpolation_segment_count"));
+                    zone_coordinate["logical_value"] = (*zone_metadata_iter).second[element_idx_iter].value() / std::stod(ConfigReader::instance().getRuntimeConfigValue("mesh", "transfinite_interpolation_segment_count"));
                     
                     zone_coordinate_list.push_back(zone_coordinate);
                 }
@@ -300,13 +310,17 @@ void MeshZoning::executionPhase() {
     }
     
     internal_output_xdmf_adapter.appendZoneCreationData(neutral_geometry_topology_list, hdf5_buffer);
+    MeshReport::instance().addFileSuffix("out", "extended.mesh", "xmf");
+    MeshReport::instance().addFileSuffix("out", "extended.mesh", "xmf");
+
+    MeshReport::instance().addTimePoint("extended_mesh_out", std::chrono::system_clock::now());
 
     zone_full_json["zone"] = zone_data;
 
     std::string zone_json_file_path =
-        config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "scmp", "staging_directory_path") +
+        ConfigReader::instance().getRuntimeConfigValue("scmp", "staging_directory_path") +
         "/" +
-        config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "scmp", "file_name_prefix") +
+        ConfigReader::instance().getRuntimeConfigValue("scmp", "file_name_prefix") +
         "_" +
         "zone.json";
 
@@ -316,11 +330,12 @@ void MeshZoning::executionPhase() {
 
     std::ofstream zone_json_out(zone_buffer);
     zone_json_out << std::setw(4) << zone_full_json << std::endl;
+
+    MeshReport::instance().addTimePoint("zoning_finish", std::chrono::system_clock::now());
 }
 
 void MeshZoning::addZoneMetadata() {
-    ConfigReader config_reader;
-    std::string mesh_strategy = config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "mesh", "strategy");
+    std::string mesh_strategy = ConfigReader::instance().getRuntimeConfigValue("mesh", "strategy");
 
     if (mesh_strategy == "transfinite_interpolation") {
         const std::vector<std::string> zone_option_str = { "plane", "line", "point" };
@@ -355,7 +370,7 @@ void MeshZoning::addZoneMetadata() {
             std::cout << "--- coordinate " << (iter + 1) << " ---" << std::endl;
             std::cout << "coordinate axis (X/Y/Z): ";
             std::cin >> selected_coordinate_axis;
-            std::cout << "element_index (0-" << config_reader.getRuntimeConfigValue(_runtimeConfigFilePath, "mesh", "transfinite_interpolation_segment_count") << "): ";
+            std::cout << "element_index (0-" << ConfigReader::instance().getRuntimeConfigValue("mesh", "transfinite_interpolation_segment_count") << "): ";
             std::cin >> selected_element_idx;
 
             if (selected_coordinate_axis == "X") {

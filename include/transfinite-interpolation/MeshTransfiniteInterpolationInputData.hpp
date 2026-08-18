@@ -24,10 +24,10 @@ class MeshTransfiniteInterpolationInputData : public MeshInputData {
 public:
     /** Constructor of MeshTransfiniteInterpolationInputData object
      */
-    MeshTransfiniteInterpolationInputData();
+    MeshTransfiniteInterpolationInputData() = default;
 
     /** Destructor of MeshTransfiniteInterpolationInputData object */
-    ~MeshTransfiniteInterpolationInputData();
+    ~MeshTransfiniteInterpolationInputData() = default;
 
     /** Method to transform neutral geometry-topology data structure to mesh strategy-specific geometry-topology data structure */
     void transform(std::shared_ptr<GeometryTopology> neutral_geometry_topology);

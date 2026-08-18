@@ -18,6 +18,7 @@
 #include <iostream>
 
 #include "geometry-topology/GeometryTopologyVertex.hpp"
+#include "report/MeshReport.hpp"
 
 #include "data-structure/MeshGraphVertex.hpp"
 #include "data-structure/MeshGraphEdge.hpp"
@@ -29,10 +30,6 @@
 MeshTransfiniteInterpolationAlgorithm::MeshTransfiniteInterpolationAlgorithm(std::shared_ptr<MeshInputData> input_data, std::shared_ptr<MeshOutputData> output_data) {
     _inputData = input_data;
     _outputData = output_data;
-}
-
-MeshTransfiniteInterpolationAlgorithm::~MeshTransfiniteInterpolationAlgorithm() {
-    // TBA
 }
 
 void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
@@ -95,6 +92,10 @@ void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
                 std::array<double, 3> current_iter_vertex_coordinate = map3DLogicalToRealCoordinate(real_vertex_coordinate_list, (i * step_size), (j * step_size), (k * step_size));
                 std::shared_ptr<GeometryTopologyVertex> current_iter_geometry_topology_vertex(new GeometryTopologyVertex(current_iter_vertex_coordinate[0], current_iter_vertex_coordinate[1], current_iter_vertex_coordinate[2]));
                 current_iter_geometry_topology_vertex->upsertAttribute("computational_grid", { 1, 3 }, { (i * step_size), (j * step_size), (k * step_size) });
+
+                if ((i == 0 || i == step_count) && (j == 0 || j == step_count) && (k == 0 || k == step_count)) {
+                    MeshReport::instance().getWholeMeshSummary().coordinate_mapping.push_back({ { (i * step_size), (j * step_size), (k * step_size) }, { current_iter_vertex_coordinate[0], current_iter_vertex_coordinate[1], current_iter_vertex_coordinate[2] } });
+                }
 
                 std::shared_ptr<MeshGraphVertex> current_iter_graph_vertex(new MeshGraphVertex(current_iter_geometry_topology_vertex));
 

@@ -23,7 +23,7 @@ public:
     MeshGraphEdge(std::shared_ptr<MeshGraphVertex> first_mesh_graph_vertex, std::shared_ptr<MeshGraphVertex> second_mesh_graph_vertex);
 
     /** Destructor of MeshGraphEdge object */
-    ~MeshGraphEdge();
+    ~MeshGraphEdge() = default;
 
     /** Accessor to the list of connected graph vertex */
     std::shared_ptr<MeshGraphVertex> getConnectedVertex(unsigned int vertex_idx);

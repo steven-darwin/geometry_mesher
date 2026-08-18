@@ -24,11 +24,10 @@ public:
 
     /** Constructor of MeshZoning object
      */
-    MeshZoning();
-    MeshZoning(const char* runtime_config_file_path);
+    MeshZoning() = default;
 
     /** Destructor of MeshZoning object */
-    ~MeshZoning();
+    ~MeshZoning() = default;
 
     void addZoneMetadata();
 

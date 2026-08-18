@@ -28,7 +28,7 @@ public:
     MeshTransfiniteInterpolationAlgorithm(std::shared_ptr<MeshInputData> input_data, std::shared_ptr<MeshOutputData> output_data);
 
     /** Destructor of MeshTransfiniteInterpolationAlgorithm object */
-    ~MeshTransfiniteInterpolationAlgorithm();
+    ~MeshTransfiniteInterpolationAlgorithm() = default;
 
     /** Method to run mesh algorithm */
     void run(unsigned int step_count);

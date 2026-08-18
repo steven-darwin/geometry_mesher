@@ -26,10 +26,10 @@ class MeshTransfiniteInterpolationOutputData : public MeshOutputData {
 public:
     /** Constructor of MeshTransfiniteInterpolationOutputData object
      */
-    MeshTransfiniteInterpolationOutputData();
+    MeshTransfiniteInterpolationOutputData() = default;
 
     /** Destructor of MeshTransfiniteInterpolationOutputData object */
-    ~MeshTransfiniteInterpolationOutputData();
+    ~MeshTransfiniteInterpolationOutputData() = default;
 
     /** Method to transform mesh strategy-specific geometry-topology data structure to neutral geometry-topology data structure */
     std::shared_ptr<GeometryTopology> transform();

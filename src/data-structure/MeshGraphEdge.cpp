@@ -19,10 +19,6 @@ MeshGraphEdge::MeshGraphEdge(std::shared_ptr<MeshGraphVertex> first_mesh_graph_v
     _connectedVertex[1] = second_mesh_graph_vertex;
 }
 
-MeshGraphEdge::~MeshGraphEdge() {
-    // TBA
-}
-
 std::shared_ptr<MeshGraphVertex> MeshGraphEdge::getConnectedVertex(unsigned int vertex_idx) {
     return _connectedVertex[vertex_idx];
 }

@@ -20,10 +20,10 @@ class MeshAlgorithm {
 public:
     /** Constructor of MeshAlgorithm object
      */
-    MeshAlgorithm();
+    MeshAlgorithm() = default;
 
     /** Destructor of MeshAlgorithm object */
-    ~MeshAlgorithm();
+    ~MeshAlgorithm() = default;
 
     /** Method to run mesh algorithm */
     virtual void run(unsigned int step_count) = 0;

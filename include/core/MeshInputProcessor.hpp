@@ -32,13 +32,13 @@ class MeshInputProcessor {
 public:
     /** Constructor of MeshInputProcessor object
      */
-    MeshInputProcessor();
+    MeshInputProcessor() = default;
 
     /** Destructor of MeshInputProcessor object */
-    ~MeshInputProcessor();
+    ~MeshInputProcessor() = default;
 
     /** Method to set input adapter info */
-    void setInputAdapterInfo(const char* runtime_config_file_path);
+    void setInputAdapterInfo();
 
     /** Method to run input adapter */
     void runInputAdapter();

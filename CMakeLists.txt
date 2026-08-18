@@ -29,6 +29,7 @@ set(PROJECT_SOURCES
     src/delaunay/MeshDelaunayOutputData.cpp
     src/data-structure/MeshGraphVertex.cpp
     src/data-structure/MeshGraphEdge.cpp
+    src/report/MeshReport.cpp
     ../../src/input-output/InputOutputAdapter.cpp
     ../../src/input-output/InputAdapter.cpp
     ../../src/input-output/InputSTEPAdapter.cpp

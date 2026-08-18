@@ -19,10 +19,10 @@ class MeshOutputData {
 public:
     /** Constructor of MeshOutputData object
      */
-    MeshOutputData();
+    MeshOutputData() = default;
 
     /** Destructor of MeshOutputData object */
-    ~MeshOutputData();
+    ~MeshOutputData() = default;
 
     /** Method to transform mesh strategy-specific geometry-topology data structure to neutral geometry-topology data structure */
     virtual std::shared_ptr<GeometryTopology> transform() = 0;

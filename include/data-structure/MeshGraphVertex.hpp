@@ -25,7 +25,7 @@ public:
     MeshGraphVertex(std::shared_ptr<GeometryTopology> geometry_topology);
 
     /** Destructor of MeshGraphVertex object */
-    ~MeshGraphVertex();
+    ~MeshGraphVertex() = default;
 
     /** Method to add graph edge which is connected to this graph vertex */
     void addConnectedEdge(std::shared_ptr<MeshGraphEdge> mesh_graph_edge);

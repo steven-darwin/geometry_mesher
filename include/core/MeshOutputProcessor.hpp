@@ -32,13 +32,13 @@ class MeshOutputProcessor {
 public:
     /** Constructor of MeshOutputProcessor object
      */
-    MeshOutputProcessor();
+    MeshOutputProcessor() = default;
 
     /** Destructor of MeshOutputProcessor object */
-    ~MeshOutputProcessor();
+    ~MeshOutputProcessor() = default;
 
     /** Method to set output adapter info */
-    void setOutputAdapterInfo(const char* runtime_config_file_path);
+    void setOutputAdapterInfo();
 
     /** Method to run output adapter */
     void runOutputAdapter();

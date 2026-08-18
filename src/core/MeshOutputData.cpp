@@ -9,11 +9,3 @@
  */
 
 #include "core/MeshOutputData.hpp"
-
-MeshOutputData::MeshOutputData() {
-    // TBA
-}
-
-MeshOutputData::~MeshOutputData() {
-    // TBA
-}

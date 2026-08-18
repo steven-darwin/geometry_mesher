@@ -17,14 +17,6 @@
 #include "data-structure/MeshGraphVertex.hpp"
 #include "data-structure/MeshGraphEdge.hpp"
 
-MeshTransfiniteInterpolationInputData::MeshTransfiniteInterpolationInputData() {
-    // TBA
-}
-
-MeshTransfiniteInterpolationInputData::~MeshTransfiniteInterpolationInputData() {
-    // TBA
-}
-
 void MeshTransfiniteInterpolationInputData::transform(std::shared_ptr<GeometryTopology> neutral_geometry_topology) {
     std::unordered_map<std::shared_ptr<GeometryTopology>, unsigned int> edge_list;
     neutral_geometry_topology->getDescendants(edge_list, GeometryTopology::EDGE);

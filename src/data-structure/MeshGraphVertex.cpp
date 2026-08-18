@@ -18,10 +18,6 @@ MeshGraphVertex::MeshGraphVertex(std::shared_ptr<GeometryTopology> geometry_topo
     _vertex = geometry_topology;
 }
 
-MeshGraphVertex::~MeshGraphVertex() {
-    // TBA
-}
-
 void MeshGraphVertex::addConnectedEdge(std::shared_ptr<MeshGraphEdge> mesh_graph_edge) {
     _connectedEdge.push_back(mesh_graph_edge);
 }

@@ -9,6 +9,7 @@
  */
 
 #include <memory>
+#include <chrono>
 
 #include "general/Generic.hpp"
 
@@ -18,26 +19,18 @@
 #include "input-output/InputHDF5Adapter.hpp"
 
 #include "core/MeshInputProcessor.hpp"
+#include "report/MeshReport.hpp"
 
-
-MeshInputProcessor::MeshInputProcessor() {
-    // TBA
-}
-
-MeshInputProcessor::~MeshInputProcessor() {
-    // TBA
-}
-
-void MeshInputProcessor::setInputAdapterInfo(const char* runtime_config_file_path) {
-    ConfigReader config_reader;
-
-    if (config_reader.getRuntimeConfigValue(runtime_config_file_path, "mesh", "input_file_extension") == "step") {
-        _inputAdapterInfo._adapterObj = std::make_shared<InputSTEPAdapter>(runtime_config_file_path);
+void MeshInputProcessor::setInputAdapterInfo() {
+    if (ConfigReader::instance().getRuntimeConfigValue("mesh", "input_file_extension") == "step") {
+        _inputAdapterInfo._adapterObj = std::make_shared<InputSTEPAdapter>();
     }
 }
 
 void MeshInputProcessor::runInputAdapter() {
     _inputAdapterInfo._neutralGeometryTopology = std::dynamic_pointer_cast<InputAdapter>(_inputAdapterInfo._adapterObj)->deserialize()[0];
+    MeshReport::instance().addFileSuffix("in", "", "STEP");
+    MeshReport::instance().addTimePoint("step_in", std::chrono::system_clock::now());
 }
 
 void MeshInputProcessor::setMeshInputData(std::shared_ptr<MeshInputData> input_data) {

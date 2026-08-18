@@ -31,14 +31,6 @@
 
 #include "transfinite-interpolation/MeshTransfiniteInterpolationOutputData.hpp"
 
-MeshTransfiniteInterpolationOutputData::MeshTransfiniteInterpolationOutputData() {
-    // TBA
-}
-
-MeshTransfiniteInterpolationOutputData::~MeshTransfiniteInterpolationOutputData() {
-    // TBA
-}
-
 std::shared_ptr<GeometryTopology> MeshTransfiniteInterpolationOutputData::transform() {
     std::unordered_map<std::shared_ptr<MeshGraphEdge>, std::pair<unsigned int, std::shared_ptr<GeometryTopologyEdge>>> edge_list;
     unsigned int counter = 0;

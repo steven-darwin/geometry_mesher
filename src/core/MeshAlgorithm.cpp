@@ -8,14 +8,4 @@
  * @brief [Implementation] Abstract class for mesh algorithm.
  */
 
-#include <memory>
-
 #include "core/MeshAlgorithm.hpp"
-
-MeshAlgorithm::MeshAlgorithm() {
-    // TBA
-}
-
-MeshAlgorithm::~MeshAlgorithm() {
-    // TBA
-}

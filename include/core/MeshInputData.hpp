@@ -19,10 +19,10 @@ class MeshInputData {
 public:
     /** Constructor of MeshInputData object
      */
-    MeshInputData();
+    MeshInputData() = default;
 
     /** Destructor of MeshInputData object */
-    ~MeshInputData();
+    ~MeshInputData() = default;
 
     /** Method to transform neutral geometry-topology data structure to mesh strategy-specific geometry-topology data structure */
     virtual void transform(std::shared_ptr<GeometryTopology>) = 0;
