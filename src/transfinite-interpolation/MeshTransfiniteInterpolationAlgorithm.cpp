@@ -61,7 +61,10 @@ void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
     }
 
     // Discretize and map logical vertex to real vertex
-    std::cout << "------------------------------------------" << std::endl;
+    if (ConfigReader::instance().getEnvConfigValue("IS_DEBUG") == "1") {
+        std::cout << "------------------------------------------" << std::endl;
+    }
+
     std::vector<std::array<double, 3>> real_vertex_coordinate_list;
     real_vertex_coordinate_list.resize(normalized_graph_vertex_mapping.size());
     for (auto normalized_vertex_iter = normalized_graph_vertex_mapping.begin(); normalized_vertex_iter != normalized_graph_vertex_mapping.end(); normalized_vertex_iter++) {
@@ -71,10 +74,16 @@ void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
             current_iter_real_vertex->getCoordinate(GeometryTopologyVertex::Y), 
             current_iter_real_vertex->getCoordinate(GeometryTopologyVertex::Z) 
         };
-        std::cout << (*(*normalized_vertex_iter).second)[0] << " | " << (*(*normalized_vertex_iter).second)[1] << " | " << (*(*normalized_vertex_iter).second)[2] << std::endl;
-        std::cout << current_iter_real_vertex->getCoordinate(GeometryTopologyVertex::X) << " | " << current_iter_real_vertex->getCoordinate(GeometryTopologyVertex::Y) << " | " << current_iter_real_vertex->getCoordinate(GeometryTopologyVertex::Z) << std::endl;
+
+        if (ConfigReader::instance().getEnvConfigValue("IS_DEBUG") == "1") {
+            std::cout << (*(*normalized_vertex_iter).second)[0] << " | " << (*(*normalized_vertex_iter).second)[1] << " | " << (*(*normalized_vertex_iter).second)[2] << std::endl;
+            std::cout << current_iter_real_vertex->getCoordinate(GeometryTopologyVertex::X) << " | " << current_iter_real_vertex->getCoordinate(GeometryTopologyVertex::Y) << " | " << current_iter_real_vertex->getCoordinate(GeometryTopologyVertex::Z) << std::endl;
+        }
     }
-    std::cout << "------------------------------------------" << std::endl;
+
+    if (ConfigReader::instance().getEnvConfigValue("IS_DEBUG") == "1") {
+        std::cout << "------------------------------------------" << std::endl;
+    }
 
     double step_size = 1.0f / step_count;
     std::vector<std::shared_ptr<MeshGraphVertex>> vertex_in_prev_i_plane;
@@ -87,7 +96,9 @@ void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
             std::shared_ptr<MeshGraphVertex> vertex_in_prev_k_point;
 
             for (unsigned int k = 0; k <= step_count; k++) {
-                std::cout << i << " " << j << " " << k << std::endl;
+                if (ConfigReader::instance().getEnvConfigValue("IS_DEBUG") == "1") {
+                    std::cout << i << " " << j << " " << k << std::endl;
+                }
 
                 std::array<double, 3> current_iter_vertex_coordinate = map3DLogicalToRealCoordinate(real_vertex_coordinate_list, (i * step_size), (j * step_size), (k * step_size));
                 std::shared_ptr<GeometryTopologyVertex> current_iter_geometry_topology_vertex(new GeometryTopologyVertex(current_iter_vertex_coordinate[0], current_iter_vertex_coordinate[1], current_iter_vertex_coordinate[2]));
@@ -123,6 +134,9 @@ void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
                 vertex_in_prev_k_point = current_iter_graph_vertex;
                 vertex_in_prev_j_line[k] = current_iter_graph_vertex;
                 vertex_in_prev_i_plane[(j * (step_count + 1)) + k] = current_iter_graph_vertex;
+
+                unsigned int progress = 10.0 + (((i * std::pow(step_count + 1, 2)) + (j * std::pow(step_count + 1, 1)) + ((k + 1) * std::pow(step_count + 1, 0))) / static_cast<double>(std::pow(step_count + 1, 3)) * 20.0);
+                std::cout << "\r" << "Executing Meshing Algorithm (transfinite-interpolation) " << std::string(static_cast<size_t>(std::floor(progress / 10)), '=') << "> " << progress << "%";
             }
         }
     }

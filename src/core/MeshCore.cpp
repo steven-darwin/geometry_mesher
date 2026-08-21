@@ -39,13 +39,19 @@ void MeshCore::run() {
         _outputData = std::make_shared<MeshTransfiniteInterpolationOutputData>();
 
         _inputProcessor.runInputAdapter();
+
         _inputProcessor.setMeshInputData(_inputData);
+        std::cout << "\r" << "Executing Meshing Algorithm (transfinite-interpolation) => 10%";
 
         _algorithm = std::make_shared<MeshTransfiniteInterpolationAlgorithm>(_inputData, _outputData);
         _algorithm->run(std::stoi(ConfigReader::instance().getRuntimeConfigValue("mesh", "transfinite_interpolation_segment_count")));
+        std::cout << "\r" << "Executing Meshing Algorithm (transfinite-interpolation) ===> 30%";
+
         MeshReport::instance().addTimePoint("mesh_completion", std::chrono::system_clock::now());
 
         _outputProcessor.getMeshOutputData(_outputData);
+        std::cout << "\r" << "Executing Meshing Algorithm (transfinite-interpolation) ==========> 100%" << std::endl;
+
         _outputProcessor.runOutputAdapter();
     } else {
         // TBA

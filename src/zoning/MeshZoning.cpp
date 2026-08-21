@@ -33,6 +33,7 @@ void MeshZoning::setupPhase() {
     while (setup_zone) {
         std::string is_zone_being_added;
 
+        std::cout << std::endl;
         std::cout << "Adding Zone? (Y/N)" << std::endl;
         std::cin >> is_zone_being_added;
         if (is_zone_being_added == "Y") {
@@ -48,6 +49,8 @@ void MeshZoning::setupPhase() {
 }
 
 void MeshZoning::executionPhase() {
+    std::cout << std::endl;
+
     MeshReport::instance().addTimePoint("zoning_begin", std::chrono::system_clock::now());
 
     std::string mesh_strategy = ConfigReader::instance().getRuntimeConfigValue("mesh", "strategy");
@@ -87,6 +90,7 @@ void MeshZoning::executionPhase() {
         whole_mesh_zone_item["type"] = "whole";
         zone_data.push_back(whole_mesh_zone_item);
 
+        unsigned int zone_counter = 0;
         for (auto zone_metadata_iter = _zoneMetadataList.begin(); zone_metadata_iter != _zoneMetadataList.end(); zone_metadata_iter++) {
             unsigned int element_idx_counter = 0;
             for (auto element_idx_iter = 0; element_idx_iter < 3; element_idx_iter++) {
@@ -136,10 +140,14 @@ void MeshZoning::executionPhase() {
             H5Sselect_hyperslab(memory_dataspace, H5S_SELECT_SET, memory_start, memory_stride, memory_count, memory_block);
 
             if (H5Dread(parameter_dataset, memory_datatype, memory_dataspace, parameter_dataspace, H5P_DEFAULT, parameter_buffer.data()) < 0) {
-                std::cout << "Parameter (" << "computational_grid" << ") Dataset fetching is failed." << std::endl;
+                if (ConfigReader::instance().getEnvConfigValue("IS_DEBUG") == "1") {
+                    std::cout << "Parameter (" << "computational_grid" << ") Dataset fetching is failed." << std::endl;
+                }
             }
             else {
-                std::cout << "Parameter (" << "computational_grid" << ") Dataset fetching is success." << std::endl;
+                if (ConfigReader::instance().getEnvConfigValue("IS_DEBUG") == "1") {
+                    std::cout << "Parameter (" << "computational_grid" << ") Dataset fetching is success." << std::endl;
+                }
             }
 
             std::unordered_map<std::array<uint8_t, 16>, std::array<double, 3>, InputHDF5Adapter::UUIDHash> computational_grid_data;
@@ -240,6 +248,9 @@ void MeshZoning::executionPhase() {
                 // do nothing
             }
 
+            unsigned int progress = (zone_counter + 1) / static_cast<double>(_zoneMetadataList.size()) * 100;
+            std::cout << "\r" << "Zoning " << std::string(static_cast<size_t>(std::floor(progress / 10)), '=') << "> " << progress << "%";
+
             json zone_item;
 
             MeshReport::ZoneSummaryItem zone_summary;
@@ -306,8 +317,12 @@ void MeshZoning::executionPhase() {
             zone_item["coordinate"] = zone_coordinate_list;
 
             zone_data.push_back(zone_item);
+
+            zone_counter++;
         }
     }
+
+    std::cout << std::endl;
     
     internal_output_xdmf_adapter.appendZoneCreationData(neutral_geometry_topology_list, hdf5_buffer);
     MeshReport::instance().addFileSuffix("out", "extended.mesh", "xmf");

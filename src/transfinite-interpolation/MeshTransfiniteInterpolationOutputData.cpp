@@ -45,9 +45,14 @@ std::shared_ptr<GeometryTopology> MeshTransfiniteInterpolationOutputData::transf
     std::vector<std::vector<std::shared_ptr<GeometryTopologyFace>>> incident_face_on_edge;
     incident_face_on_edge.resize(edge_list.size());
 
+    unsigned int counter2 = 0;
     for (auto edge_iter = _meshGraphEdgeList.begin(); edge_iter != _meshGraphEdgeList.end(); edge_iter++) {
         std::unordered_set<std::shared_ptr<MeshGraphEdge>> traversed_edges;
         constructFaceFromCycledGraphEdge(edge_list, face_list, incident_face_on_edge, (*edge_iter), nullptr, traversed_edges, face_list_idx);
+        
+        unsigned int progress = 30.0 + (counter2 / static_cast<double>(_meshGraphEdgeList.size()) * 30.0);
+        std::cout << "\r" << "Executing Meshing Algorithm (transfinite-interpolation) " << std::string(static_cast<size_t>(std::floor(progress / 10)), '=') << "> " << progress << "%";
+        counter2++;
     }
 
     for (auto incident_face_on_edge_iter = incident_face_on_edge.begin(); incident_face_on_edge_iter != incident_face_on_edge.end(); incident_face_on_edge_iter++) {
@@ -70,9 +75,14 @@ std::shared_ptr<GeometryTopology> MeshTransfiniteInterpolationOutputData::transf
         counter3++;
     }
 
+    unsigned int counter4 = 0;
     for (auto face_iter = face_as_graph_vertex_list.begin(); face_iter != face_as_graph_vertex_list.end(); face_iter++) {
         std::unordered_set<std::shared_ptr<MeshGraphVertex>> traversed_vertices;
         constructCellFromCycledGraphVertex(face_as_graph_vertex_list, cell_list, (*face_iter).first, traversed_vertices, cell_list_idx);
+
+        unsigned int progress = 60 + (counter4 / static_cast<double>(face_as_graph_vertex_list.size()) * 40);
+        std::cout << "\r" << "Executing Meshing Algorithm (transfinite-interpolation) " << std::string(static_cast<size_t>(std::floor(progress / 10)), '=') << "> " << progress << "%";
+        counter4++;
     }
 
     _composite = std::make_shared<GeometryTopologyComposite>();
