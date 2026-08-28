@@ -15,18 +15,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(PROJECT_SOURCES
     geometry_mesher.cpp
     src/core/MeshCore.cpp
-    src/core/MeshInputProcessor.cpp
-    src/core/MeshOutputProcessor.cpp
     src/core/MeshInputData.cpp
     src/core/MeshAlgorithm.cpp
     src/core/MeshOutputData.cpp
-    src/zoning/MeshZoning.cpp
+    src/zoning/MeshZone.cpp
     src/transfinite-interpolation/MeshTransfiniteInterpolationInputData.cpp
     src/transfinite-interpolation/MeshTransfiniteInterpolationAlgorithm.cpp
     src/transfinite-interpolation/MeshTransfiniteInterpolationOutputData.cpp
-    src/delaunay/MeshDelaunayInputData.cpp
-    src/delaunay/MeshDelaunayAlgorithm.cpp
-    src/delaunay/MeshDelaunayOutputData.cpp
     src/data-structure/MeshGraphVertex.cpp
     src/data-structure/MeshGraphEdge.cpp
     src/report/MeshReport.cpp

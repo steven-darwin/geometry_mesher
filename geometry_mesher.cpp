@@ -11,7 +11,7 @@
 #include "utility/ConfigReader.hpp"
 
 #include "core/MeshCore.hpp"
-#include "zoning/MeshZoning.hpp"
+#include "zoning/MeshZone.hpp"
 #include "report/MeshReport.hpp"
 
 int main(int argc, char* argv[])
@@ -20,14 +20,11 @@ int main(int argc, char* argv[])
 
 	MeshReport::instance().addTimePoint("start_execution", std::chrono::system_clock::now());
 
-	MeshCore original_mesh_program;
-	original_mesh_program.setInputProcessor();
-	original_mesh_program.setOutputProcessor();
-	original_mesh_program.run();
+	MeshCore::instance().setup();
+	MeshCore::instance().run();
 
-	MeshZoning extended_mesh_program;
-	extended_mesh_program.setupPhase();
-	extended_mesh_program.executionPhase();
+	MeshZone::instance().setup();
+	MeshZone::instance().run();
 	
 	MeshReport::instance().addTimePoint("end_execution", std::chrono::system_clock::now());
 

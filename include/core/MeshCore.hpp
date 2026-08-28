@@ -14,9 +14,8 @@
 #include <memory>
 
 #include <general/Generic.hpp>
-
-#include "core/MeshInputProcessor.hpp"
-#include "core/MeshOutputProcessor.hpp"
+#include <input-output/InputAdapter.hpp>
+#include <input-output/OutputAdapter.hpp>
 
 #include "core/MeshInputData.hpp"
 #include "core/MeshAlgorithm.hpp"
@@ -24,29 +23,24 @@
 
 class MeshCore {
 public:
-    /** Constructor of MeshCore object
-     */
-    MeshCore() = default;
+    static MeshCore& instance();
 
-    /** Destructor of MeshCore object */
-    ~MeshCore() = default;
+    MeshCore(const MeshCore&) = delete;
+    MeshCore& operator=(const MeshCore&) = delete;
 
-    /** Method to set input file and input adapter obj */
-    void setInputProcessor();
-
-    /** Method to set output file and output adapter obj */
-    void setOutputProcessor();
+    /** Method to set up i/o adapter objects */
+    void setup();
 
     /** Method to set mesh strategy */
     void run();
 
-private:
-    MeshInputProcessor _inputProcessor;
-    MeshOutputProcessor _outputProcessor;
+    std::shared_ptr<InputOutputAdapter> getIOAdapter(std::string type);
 
-    std::shared_ptr<MeshInputData> _inputData;
-    std::shared_ptr<MeshAlgorithm> _algorithm;
-    std::shared_ptr<MeshOutputData> _outputData;
+private:
+    MeshCore() = default;
+
+    std::shared_ptr<InputAdapter> _inputAdapter;
+    std::shared_ptr<OutputAdapter> _outputAdapter;
 };
 
 #endif

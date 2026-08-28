@@ -19,7 +19,7 @@
 #include <chrono>
 
 #include "geometry-topology/GeometryTopology.hpp"
-#include "zoning/MeshZoning.hpp"
+#include "zoning/MeshZone.hpp"
 
 class MeshReport {
 public:

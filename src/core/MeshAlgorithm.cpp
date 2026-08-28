@@ -9,3 +9,8 @@
  */
 
 #include "core/MeshAlgorithm.hpp"
+
+void MeshAlgorithm::setup(std::shared_ptr<MeshInputData> input, std::shared_ptr<MeshOutputData> output) {
+    _inputData = input;
+    _outputData = output;
+}

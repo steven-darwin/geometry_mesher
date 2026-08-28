@@ -25,15 +25,17 @@ class MeshTransfiniteInterpolationAlgorithm : public MeshAlgorithm {
 public:
     /** Constructor of MeshTransfiniteInterpolationAlgorithm object
      */
-    MeshTransfiniteInterpolationAlgorithm(std::shared_ptr<MeshInputData> input_data, std::shared_ptr<MeshOutputData> output_data);
+    MeshTransfiniteInterpolationAlgorithm(unsigned int segment_count);
 
     /** Destructor of MeshTransfiniteInterpolationAlgorithm object */
     ~MeshTransfiniteInterpolationAlgorithm() = default;
 
     /** Method to run mesh algorithm */
-    void run(unsigned int step_count);
+    void run();
 
 private:
+    unsigned int _segmentCount;
+
     /** Method to map 3D logical coordinate into real coordinate */
     std::array<double, 3> map3DLogicalToRealCoordinate(std::vector<std::array<double, 3>> real_vertex_coordinate_list, std::optional<double> x1, std::optional<double> x2, std::optional<double> x3);
 

@@ -1,5 +1,5 @@
 /**
- * @file MeshZoning.cpp
+ * @file MeshZone.cpp
  * @author Steven Darwin
  * @version 0.0.1
  * @date Created : 2026-08-03
@@ -24,10 +24,15 @@ using json = nlohmann::json;
 #include "input-output/InputHDF5Adapter.hpp"
 #include "utility/ConfigReader.hpp"
 
-#include "zoning/MeshZoning.hpp"
+#include "zoning/MeshZone.hpp"
 #include "report/MeshReport.hpp"
 
-void MeshZoning::setupPhase() {
+MeshZone& MeshZone::instance() {
+    static MeshZone singleton;
+    return singleton;
+}
+
+void MeshZone::setup() {
     bool setup_zone = true;
 
     while (setup_zone) {
@@ -48,10 +53,10 @@ void MeshZoning::setupPhase() {
     }
 }
 
-void MeshZoning::executionPhase() {
+void MeshZone::run() {
     std::cout << std::endl;
 
-    MeshReport::instance().addTimePoint("zoning_begin", std::chrono::system_clock::now());
+    MeshReport::instance().addTimePoint("Zone_begin", std::chrono::system_clock::now());
 
     std::string mesh_strategy = ConfigReader::instance().getRuntimeConfigValue("mesh", "strategy");
     std::vector<std::shared_ptr<GeometryTopology>> neutral_geometry_topology_list;
@@ -68,12 +73,14 @@ void MeshZoning::executionPhase() {
     std::memcpy(hdf5_buffer, existing_hdf5_file_path.c_str(), existing_hdf5_file_path.length());
     hdf5_buffer[existing_hdf5_file_path.length()] = '\0';
 
-    OutputXDMFAdapter internal_output_xdmf_adapter("extended.mesh");
+    OutputXDMFAdapter internal_output_xdmf_adapter;
+
     OutputXDMFAdapter::ParameterMetadata computational_grid_parameter = {
             "computational_grid",
             {1, 3},
             GeometryTopology::Type::VERTEX
     };
+
     internal_output_xdmf_adapter.addSolverParameter({ computational_grid_parameter });
     
     json zone_full_json;
@@ -81,8 +88,8 @@ void MeshZoning::executionPhase() {
 
     if (mesh_strategy == "transfinite_interpolation") {
         const std::vector<std::string> zone_option = { "plane", "line", "point" };
-        InputHDF5Adapter internal_input_hdf5_adapter("original.mesh");
-        std::shared_ptr<GeometryTopology> original_mesh = internal_input_hdf5_adapter.deserialize()[0];
+        InputHDF5Adapter internal_input_hdf5_adapter;
+        std::shared_ptr<GeometryTopology> original_mesh = internal_input_hdf5_adapter.deserialize("original.mesh")[0];
 
         json whole_mesh_zone_item;
         whole_mesh_zone_item["name"] = "whole_mesh";
@@ -249,7 +256,7 @@ void MeshZoning::executionPhase() {
             }
 
             unsigned int progress = (zone_counter + 1) / static_cast<double>(_zoneMetadataList.size()) * 100;
-            std::cout << "\r" << "Zoning " << std::string(static_cast<size_t>(std::floor(progress / 10)), '=') << "> " << progress << "%";
+            std::cout << "\r" << "Processing Zone Definition " << std::string(static_cast<size_t>(std::floor(progress / 10)), '=') << "> " << progress << "%";
 
             json zone_item;
 
@@ -324,7 +331,8 @@ void MeshZoning::executionPhase() {
 
     std::cout << std::endl;
     
-    internal_output_xdmf_adapter.appendZoneCreationData(neutral_geometry_topology_list, hdf5_buffer);
+    internal_output_xdmf_adapter.appendZoneCreationData(neutral_geometry_topology_list, hdf5_buffer, "extended.mesh");
+
     MeshReport::instance().addFileSuffix("out", "extended.mesh", "xmf");
     MeshReport::instance().addFileSuffix("out", "extended.mesh", "xmf");
 
@@ -346,10 +354,10 @@ void MeshZoning::executionPhase() {
     std::ofstream zone_json_out(zone_buffer);
     zone_json_out << std::setw(4) << zone_full_json << std::endl;
 
-    MeshReport::instance().addTimePoint("zoning_finish", std::chrono::system_clock::now());
+    MeshReport::instance().addTimePoint("Zone_finish", std::chrono::system_clock::now());
 }
 
-void MeshZoning::addZoneMetadata() {
+void MeshZone::addZoneMetadata() {
     std::string mesh_strategy = ConfigReader::instance().getRuntimeConfigValue("mesh", "strategy");
 
     if (mesh_strategy == "transfinite_interpolation") {
@@ -361,7 +369,7 @@ void MeshZoning::addZoneMetadata() {
         std::cout << "-----------------------------------------------" << std::endl;
 
         std::cout << "Please select the zone option! (type the number)" << std::endl;
-        for (unsigned int iter = 0; iter < MeshZoning::ZoneOption::MAX; iter++) {
+        for (unsigned int iter = 0; iter < MeshZone::ZoneOption::MAX; iter++) {
             std::cout << (iter + 1) << ". " << zone_option_str[iter] << std::endl;
         }
         std::cout << "selected zone : ";

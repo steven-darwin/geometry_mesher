@@ -25,13 +25,15 @@ public:
     /** Destructor of MeshAlgorithm object */
     ~MeshAlgorithm() = default;
 
+    void setup(std::shared_ptr<MeshInputData> input, std::shared_ptr<MeshOutputData> output);
+
     /** Method to run mesh algorithm */
-    virtual void run(unsigned int step_count) = 0;
+    virtual void run() = 0;
 
 protected:
     std::shared_ptr<MeshInputData> _inputData;
     std::shared_ptr<MeshOutputData> _outputData;
-    
+
 };
 
 #endif

@@ -27,12 +27,11 @@
 #include "transfinite-interpolation/MeshTransfiniteInterpolationAlgorithm.hpp"
 #include "transfinite-interpolation/MeshTransfiniteInterpolationOutputData.hpp"
 
-MeshTransfiniteInterpolationAlgorithm::MeshTransfiniteInterpolationAlgorithm(std::shared_ptr<MeshInputData> input_data, std::shared_ptr<MeshOutputData> output_data) {
-    _inputData = input_data;
-    _outputData = output_data;
+MeshTransfiniteInterpolationAlgorithm::MeshTransfiniteInterpolationAlgorithm(unsigned int segment_count) {
+    _segmentCount = segment_count;
 }
 
-void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
+void MeshTransfiniteInterpolationAlgorithm::run() {
     // Mapped real vertex to logical vertex
     std::unordered_map<std::shared_ptr<MeshGraphVertex>, std::shared_ptr<std::array<double, 3>>> normalized_graph_vertex_mapping;
 
@@ -85,17 +84,17 @@ void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
         std::cout << "------------------------------------------" << std::endl;
     }
 
-    double step_size = 1.0f / step_count;
+    double step_size = 1.0f / _segmentCount;
     std::vector<std::shared_ptr<MeshGraphVertex>> vertex_in_prev_i_plane;
-    vertex_in_prev_i_plane.resize((step_count + 1) * (step_count + 1));
-    for (unsigned int i = 0; i <= step_count; i++) {
+    vertex_in_prev_i_plane.resize((_segmentCount + 1) * (_segmentCount + 1));
+    for (unsigned int i = 0; i <= _segmentCount; i++) {
         std::vector<std::shared_ptr<MeshGraphVertex>> vertex_in_prev_j_line;
-        vertex_in_prev_j_line.resize(step_count + 1);
+        vertex_in_prev_j_line.resize(_segmentCount + 1);
 
-        for (unsigned int j = 0; j <= step_count; j++) {
+        for (unsigned int j = 0; j <= _segmentCount; j++) {
             std::shared_ptr<MeshGraphVertex> vertex_in_prev_k_point;
 
-            for (unsigned int k = 0; k <= step_count; k++) {
+            for (unsigned int k = 0; k <= _segmentCount; k++) {
                 if (ConfigReader::instance().getEnvConfigValue("IS_DEBUG") == "1") {
                     std::cout << i << " " << j << " " << k << std::endl;
                 }
@@ -104,7 +103,7 @@ void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
                 std::shared_ptr<GeometryTopologyVertex> current_iter_geometry_topology_vertex(new GeometryTopologyVertex(current_iter_vertex_coordinate[0], current_iter_vertex_coordinate[1], current_iter_vertex_coordinate[2]));
                 current_iter_geometry_topology_vertex->upsertAttribute("computational_grid", { 1, 3 }, { (i * step_size), (j * step_size), (k * step_size) });
 
-                if ((i == 0 || i == step_count) && (j == 0 || j == step_count) && (k == 0 || k == step_count)) {
+                if ((i == 0 || i == _segmentCount) && (j == 0 || j == _segmentCount) && (k == 0 || k == _segmentCount)) {
                     MeshReport::instance().getWholeMeshSummary().coordinate_mapping.push_back({ { (i * step_size), (j * step_size), (k * step_size) }, { current_iter_vertex_coordinate[0], current_iter_vertex_coordinate[1], current_iter_vertex_coordinate[2] } });
                 }
 
@@ -125,17 +124,17 @@ void MeshTransfiniteInterpolationAlgorithm::run(unsigned int step_count) {
                 }
 
                 if (i > 0) {
-                    std::shared_ptr<MeshGraphEdge> edge_to_prev_i_vertex(new MeshGraphEdge(current_iter_graph_vertex, vertex_in_prev_i_plane[(j * (step_count + 1)) + k]));
+                    std::shared_ptr<MeshGraphEdge> edge_to_prev_i_vertex(new MeshGraphEdge(current_iter_graph_vertex, vertex_in_prev_i_plane[(j * (_segmentCount + 1)) + k]));
                     current_iter_graph_vertex->addConnectedEdge(edge_to_prev_i_vertex);
-                    vertex_in_prev_i_plane[(j * (step_count + 1)) + k]->addConnectedEdge(edge_to_prev_i_vertex);
+                    vertex_in_prev_i_plane[(j * (_segmentCount + 1)) + k]->addConnectedEdge(edge_to_prev_i_vertex);
                     std::dynamic_pointer_cast<MeshTransfiniteInterpolationOutputData>(_outputData)->insertMeshGraphEdge(edge_to_prev_i_vertex);
                 }
 
                 vertex_in_prev_k_point = current_iter_graph_vertex;
                 vertex_in_prev_j_line[k] = current_iter_graph_vertex;
-                vertex_in_prev_i_plane[(j * (step_count + 1)) + k] = current_iter_graph_vertex;
+                vertex_in_prev_i_plane[(j * (_segmentCount + 1)) + k] = current_iter_graph_vertex;
 
-                unsigned int progress = 10.0 + (((i * std::pow(step_count + 1, 2)) + (j * std::pow(step_count + 1, 1)) + ((k + 1) * std::pow(step_count + 1, 0))) / static_cast<double>(std::pow(step_count + 1, 3)) * 20.0);
+                unsigned int progress = 10.0 + (((i * std::pow(_segmentCount + 1, 2)) + (j * std::pow(_segmentCount + 1, 1)) + ((k + 1) * std::pow(_segmentCount + 1, 0))) / static_cast<double>(std::pow(_segmentCount + 1, 3)) * 20.0);
                 std::cout << "\r" << "Executing Meshing Algorithm (transfinite-interpolation) " << std::string(static_cast<size_t>(std::floor(progress / 10)), '=') << "> " << progress << "%";
             }
         }
