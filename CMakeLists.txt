@@ -57,6 +57,7 @@ set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};../../shared_lib/vcpkg_installed/x64
 find_package(GTest CONFIG REQUIRED)
 find_package(hdf5 CONFIG REQUIRED)
 find_package(LibXml2 REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         GTest::gtest 
@@ -66,6 +67,7 @@ target_link_libraries(${PROJECT_NAME}
         hdf5::hdf5-shared 
         hdf5::hdf5_hl-shared
         LibXml2::LibXml2
+        nlohmann_json::nlohmann_json
 )
 
 target_link_directories(${PROJECT_NAME}
@@ -108,6 +110,3 @@ target_link_libraries(${PROJECT_NAME}
         TKG3d
         TKDESTEP
 )
-
-# file(COPY ${PROJECT_SOURCE_DIR}/test DESTINATION ${PROJECT_BINARY_DIR})
-# file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/data)

@@ -49,6 +49,8 @@ void MeshCore::setup() {
 
 void MeshCore::run() {
     if (ConfigReader::instance().getRuntimeConfigValue("mesh", "strategy") == "transfinite_interpolation") {
+        std::shared_ptr<GeometryTopology> input_neutral_geometry_topology = _inputAdapter->deserialize("")[0];
+
         std::shared_ptr<MeshInputData> input_data = std::make_shared<MeshTransfiniteInterpolationInputData>();
         std::shared_ptr<MeshOutputData> output_data = std::make_shared<MeshTransfiniteInterpolationOutputData>();
 
@@ -57,7 +59,6 @@ void MeshCore::run() {
         );
         algorithm->setup(input_data, output_data);
 
-        std::shared_ptr<GeometryTopology> input_neutral_geometry_topology = _inputAdapter->deserialize("")[0];
         input_data->transform(input_neutral_geometry_topology);
 
         if (ConfigReader::instance().getRuntimeConfigValue("mesh", "input_file_extension") == "step") {

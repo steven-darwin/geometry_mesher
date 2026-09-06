@@ -56,7 +56,7 @@ void MeshZone::setup() {
 void MeshZone::run() {
     std::cout << std::endl;
 
-    MeshReport::instance().addTimePoint("Zone_begin", std::chrono::system_clock::now());
+    MeshReport::instance().addTimePoint("zoning_begin", std::chrono::system_clock::now());
 
     std::string mesh_strategy = ConfigReader::instance().getRuntimeConfigValue("mesh", "strategy");
     std::vector<std::shared_ptr<GeometryTopology>> neutral_geometry_topology_list;
@@ -157,7 +157,7 @@ void MeshZone::run() {
                 }
             }
 
-            std::unordered_map<std::array<uint8_t, 16>, std::array<double, 3>, InputHDF5Adapter::UUIDHash> computational_grid_data;
+            std::unordered_map<std::array<uint8_t, 16>, std::array<double, 3>, GeometryTopology::UUIDHash> computational_grid_data;
             for (auto parameter_iter = parameter_buffer.begin(); parameter_iter != parameter_buffer.end(); parameter_iter++) {
                 std::array<double, 3> dummy_array;
 
@@ -168,7 +168,7 @@ void MeshZone::run() {
                 computational_grid_data.at(parameter_iter->entity_id)[parameter_iter->element_index] = parameter_iter->value;
             }
 
-            std::unordered_set<std::array<uint8_t, 16>, InputHDF5Adapter::UUIDHash> vertex_in_the_zone;
+            std::unordered_set<std::array<uint8_t, 16>, GeometryTopology::UUIDHash> vertex_in_the_zone;
 
             for (auto computational_grid_iter = computational_grid_data.begin(); computational_grid_iter != computational_grid_data.end(); computational_grid_iter++) {
                 unsigned int has_value_counter = 0;
@@ -334,7 +334,7 @@ void MeshZone::run() {
     internal_output_xdmf_adapter.appendZoneCreationData(neutral_geometry_topology_list, hdf5_buffer, "extended.mesh");
 
     MeshReport::instance().addFileSuffix("out", "extended.mesh", "xmf");
-    MeshReport::instance().addFileSuffix("out", "extended.mesh", "xmf");
+    MeshReport::instance().addFileSuffix("out", "extended.mesh", "h5");
 
     MeshReport::instance().addTimePoint("extended_mesh_out", std::chrono::system_clock::now());
 
@@ -354,7 +354,7 @@ void MeshZone::run() {
     std::ofstream zone_json_out(zone_buffer);
     zone_json_out << std::setw(4) << zone_full_json << std::endl;
 
-    MeshReport::instance().addTimePoint("Zone_finish", std::chrono::system_clock::now());
+    MeshReport::instance().addTimePoint("zoning_finish", std::chrono::system_clock::now());
 }
 
 void MeshZone::addZoneMetadata() {

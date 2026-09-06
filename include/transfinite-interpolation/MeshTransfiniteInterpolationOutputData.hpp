@@ -51,16 +51,46 @@ private:
     double calcFactorial(unsigned int upper_bound, unsigned int lower_bound);
 
     /** Method to construct geometry-topology face from cycled graph's edge */
-    void constructFaceFromCycledGraphEdge(std::unordered_map<std::shared_ptr<MeshGraphEdge>, std::pair<unsigned int, std::shared_ptr<GeometryTopologyEdge>>>& edge_list, std::unordered_map<std::shared_ptr<GeometryTopologyFace>, std::pair<unsigned int, std::shared_ptr<MeshGraphVertex>>>& face_list, std::vector<std::vector<std::shared_ptr<GeometryTopologyFace>>>& incident_face_on_edge, std::shared_ptr<MeshGraphEdge> next_edge, std::shared_ptr<MeshGraphVertex> prev_vertex, std::unordered_set<std::shared_ptr<MeshGraphEdge>> traversed_edges, std::unordered_set<unsigned long long>& face_list_idx);
+    void constructFaceFromCycledGraphEdge(
+        std::unordered_map<std::shared_ptr<MeshGraphEdge>, 
+        std::pair<unsigned int, 
+        std::shared_ptr<GeometryTopologyEdge>>>& edge_list, 
+        std::unordered_map<std::shared_ptr<GeometryTopologyFace>, std::pair<unsigned int, std::shared_ptr<MeshGraphVertex>>>& face_list, 
+        std::vector<std::vector<std::shared_ptr<GeometryTopologyFace>>>& incident_face_on_edge, 
+        std::shared_ptr<MeshGraphEdge> next_edge, std::shared_ptr<MeshGraphVertex> prev_vertex, 
+        std::unordered_set<std::shared_ptr<MeshGraphEdge>> traversed_edges, 
+        std::unordered_set<unsigned long long>& face_list_idx
+    );
 
     /** Method to construct geometry-topology face from cycled graph's vertex */
-    void constructFaceFromCycledGraphVertex(std::unordered_map<std::shared_ptr<MeshGraphVertex>, unsigned int>& graph_vertex_list, std::unordered_map<std::shared_ptr<GeometryTopologyFace>, std::shared_ptr<MeshGraphVertex>>& face_list, std::shared_ptr<MeshGraphVertex> next_vertex, std::unordered_set<std::shared_ptr<MeshGraphVertex>> traversed_vertices, std::unordered_set<unsigned long long>& face_list_idx);
+    void constructFaceFromCycledGraphVertex(
+        std::unordered_map<std::shared_ptr<MeshGraphVertex>, 
+        unsigned int>& graph_vertex_list, 
+        std::unordered_map<std::shared_ptr<GeometryTopologyFace>, std::shared_ptr<MeshGraphVertex>>& face_list, 
+        std::shared_ptr<MeshGraphVertex> next_vertex, 
+        std::unordered_set<std::shared_ptr<MeshGraphVertex>> traversed_vertices, 
+        std::unordered_set<unsigned long long>& face_list_idx
+    );
 
     /** Method to construct geometry-topology cell from cycled graph's edge */
-    void constructCellFromCycledGraphEdge(std::unordered_map<std::shared_ptr<MeshGraphEdge>, unsigned int>& edge_list, std::unordered_map<std::shared_ptr<GeometryTopologyCell>, unsigned int>& cell_list, std::shared_ptr<MeshGraphEdge> next_edge, std::shared_ptr<MeshGraphVertex> prev_vertex, std::unordered_set<std::shared_ptr<MeshGraphEdge>> traversed_edges, std::unordered_set<std::shared_ptr<GeometryTopologyVertex>> traversed_geometry_topology_vertex, std::unordered_set<unsigned long long>& cell_list_idx);
+    void constructCellFromCycledGraphEdge(
+        std::unordered_map<std::shared_ptr<MeshGraphEdge>, unsigned int>& edge_list, 
+        std::unordered_map<std::shared_ptr<GeometryTopologyCell>, unsigned int>& cell_list, 
+        std::shared_ptr<MeshGraphEdge> next_edge, 
+        std::shared_ptr<MeshGraphVertex> prev_vertex, 
+        std::unordered_set<std::shared_ptr<MeshGraphEdge>> traversed_edges, 
+        std::unordered_set<std::shared_ptr<GeometryTopologyVertex>> traversed_geometry_topology_vertex, 
+        std::unordered_set<unsigned long long>& cell_list_idx
+    );
 
     /** Method to construct geometry-topology cell from cycled graph's vertex */
-    void constructCellFromCycledGraphVertex(std::unordered_map<std::shared_ptr<MeshGraphVertex>, unsigned int>& graph_vertex_list, std::unordered_map<std::shared_ptr<GeometryTopologyCell>, unsigned int>& cell_list, std::shared_ptr<MeshGraphVertex> next_vertex, std::unordered_set<std::shared_ptr<MeshGraphVertex>> traversed_vertices, std::unordered_set<unsigned long long>& cell_list_idx);
+    void constructCellFromCycledGraphVertex(
+        std::unordered_map<std::shared_ptr<MeshGraphVertex>, unsigned int>& graph_vertex_list, 
+        std::unordered_map<std::shared_ptr<GeometryTopologyCell>, unsigned int>& cell_list, 
+        std::shared_ptr<MeshGraphVertex> next_vertex, 
+        std::unordered_set<std::shared_ptr<MeshGraphVertex>> traversed_vertices, 
+        std::unordered_set<unsigned long long>& cell_list_idx
+    );
 
     /** Attribute to store the list of mesh graph edge */
     std::vector<std::shared_ptr<MeshGraphEdge>> _meshGraphEdgeList;

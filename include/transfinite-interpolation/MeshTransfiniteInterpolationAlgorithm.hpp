@@ -37,13 +37,28 @@ private:
     unsigned int _segmentCount;
 
     /** Method to map 3D logical coordinate into real coordinate */
-    std::array<double, 3> map3DLogicalToRealCoordinate(std::vector<std::array<double, 3>> real_vertex_coordinate_list, std::optional<double> x1, std::optional<double> x2, std::optional<double> x3);
+    std::array<double, 3> map3DLogicalToRealCoordinate(
+        std::vector<std::array<double, 3>> real_vertex_coordinate_list, 
+        std::optional<double> x1, 
+        std::optional<double> x2, 
+        std::optional<double> x3
+    );
 
     /** Method to map 2D logical coordinate into real coordinate */
-    std::array<double, 3> map2DLogicalToRealCoordinate(std::vector<std::array<double, 3>> real_vertex_coordinate_list, std::optional<double> x1, std::optional<double> x2, std::optional<double> x3);
+    std::array<double, 3> map2DLogicalToRealCoordinate(
+        std::vector<std::array<double, 3>> real_vertex_coordinate_list, 
+        std::optional<double> x1, 
+        std::optional<double> x2, 
+        std::optional<double> x3
+    );
 
     /** Method to map 1D logical coordinate into real coordinate */
-    std::array<double, 3> map1DLogicalToRealCoordinate(std::vector<std::array<double, 3>> real_vertex_coordinate_list, std::optional<double> x1, std::optional<double> x2, std::optional<double> x3);
+    std::array<double, 3> map1DLogicalToRealCoordinate(
+        std::vector<std::array<double, 3>> real_vertex_coordinate_list, 
+        std::optional<double> x1, 
+        std::optional<double> x2, 
+        std::optional<double> x3
+    );
 
 };
 

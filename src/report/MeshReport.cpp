@@ -22,13 +22,10 @@ MeshReport::WholeMeshSummary& MeshReport::getWholeMeshSummary() {
     return _wholeMeshSummaryData;
 }
 
-void MeshReport::setWholeMeshSummary(WholeMeshSummary data) {
-    _wholeMeshSummaryData = data;
-}
-
 MeshReport::ZoneSummaryItem& MeshReport::getZoneSummaryItem(std::string zone_name) {
     return _zoneSummaryData.at(zone_name);
 }
+
 void MeshReport::setZoneSummaryItem(std::string zone_name, ZoneSummaryItem data) {
     _zoneSummaryData.insert({ zone_name, data });
 }
@@ -50,9 +47,9 @@ void MeshReport::exportData() {
     std::ostringstream mesh_data_in_str;
 
     // Header
-    mesh_data_in_str << paddingCenteredString("", "=", 8) << "\n";
-    mesh_data_in_str << paddingCenteredString("MESHER", " ", 8) << "\n";
-    mesh_data_in_str << paddingCenteredString("", "=", 8) << "\n";
+    mesh_data_in_str << paddingString("", "=", 8, "center") << "\n";
+    mesh_data_in_str << paddingString("MESHER", " ", 8, "center") << "\n";
+    mesh_data_in_str << paddingString("", "=", 8, "center") << "\n";
     mesh_data_in_str << "\n";
 
     // Configuration
@@ -71,7 +68,7 @@ void MeshReport::exportData() {
 
         const std::time_t temp_time = std::chrono::system_clock::to_time_t(std::get<1>(*iter));
         mesh_data_in_str << std::put_time(std::gmtime(&temp_time), "%F %T");
-        mesh_data_in_str << "." << std::chrono::duration_cast<std::chrono::milliseconds>(std::get<1>(*iter).time_since_epoch()).count() % 1000 << "\n";
+        mesh_data_in_str << "." << paddingString(std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(std::get<1>(*iter).time_since_epoch()).count() % 1000), "0", 3, "right") << "\n";
     }
 
     mesh_data_in_str << "\n";
@@ -155,13 +152,24 @@ void MeshReport::exportData() {
     report_file.close();
 }
 
-std::string MeshReport::paddingCenteredString(std::string text, std::string padding_char, unsigned int line_width) {
+std::string MeshReport::paddingString(std::string text, std::string padding_char, unsigned int line_width, std::string align_direction) {
     if (text.length() >= line_width) {
         return text;
     }
     else {
         while (text.length() < line_width) {
-            text = padding_char + text + padding_char;
+            if (align_direction == "center") {
+                text = padding_char + text + padding_char;
+            }
+            else if (align_direction == "right") {
+                text = padding_char + text;
+            }
+            else if (align_direction == "left") {
+                text = text + padding_char;
+            }
+            else {
+                // do nothing
+            }
         }
 
         return text;

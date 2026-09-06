@@ -39,7 +39,6 @@ public:
     MeshReport& operator=(const MeshReport&) = delete;
 
     WholeMeshSummary& getWholeMeshSummary();
-    void setWholeMeshSummary(WholeMeshSummary data);
 
     ZoneSummaryItem& getZoneSummaryItem(std::string zone_name);
     void setZoneSummaryItem(std::string zone_name, ZoneSummaryItem data);
@@ -58,7 +57,7 @@ private:
     std::vector<std::tuple<std::string, std::chrono::time_point<std::chrono::system_clock>>> _timePointList;
     std::vector<std::tuple<std::string, std::string, std::string>> _fileSuffixList;
 
-    std::string paddingCenteredString(std::string text, std::string padding_char, unsigned int line_width);
+    std::string paddingString(std::string text, std::string padding_char, unsigned int line_width, std::string align_direction);
 };
 
 #endif
